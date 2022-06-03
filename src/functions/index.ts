@@ -1,1 +1,5 @@
-export { default as heartbeat } from "./heartbeat";
+import heartbeat from "./heartbeat";
+
+export default {
+  ...heartbeat,
+};

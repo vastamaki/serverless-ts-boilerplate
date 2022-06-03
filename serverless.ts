@@ -1,15 +1,25 @@
 import type { AWS } from "@serverless/typescript";
+import { getEnvVariables } from "./env-variables";
+import functions from "@functions/index";
 
-import heartbeat from "@functions/heartbeat";
+const { stage } = require("minimist")(process.argv.slice(2));
+
+if (!stage) {
+  throw new Error("Stage is missing!");
+}
+
+// Load environment variables from the file based on stage
+const environmentVariables = getEnvVariables(stage);
 
 const serverlessConfiguration: AWS = {
-  service: "telegram-personal-assistant-bot",
-  frameworkVersion: "2",
+  service: "serverless-ts-boilerplate",
+  frameworkVersion: "3.19.0",
   plugins: ["serverless-esbuild"],
   provider: {
     name: "aws",
-    runtime: "nodejs14.x",
-    region: "eu-north-1",
+    runtime: "nodejs16.x",
+    region: "eu-west-1",
+    deploymentMethod: "direct",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
@@ -17,22 +27,21 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000",
+      ...environmentVariables,
     },
     lambdaHashingVersion: "20201221",
   },
-  // import the function via paths
-  functions: { heartbeat },
+  functions: functions,
   package: { individually: true },
   custom: {
     esbuild: {
       bundle: true,
-      minify: false,
+      minify: true,
       sourcemap: true,
       exclude: ["aws-sdk"],
-      target: "node14",
+      target: "node16",
       define: { "require.resolve": undefined },
       platform: "node",
-      concurrency: 10,
     },
   },
 };

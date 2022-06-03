@@ -1,6 +1,21 @@
 import middy from "@middy/core";
-import middyJsonBodyParser from "@middy/http-json-body-parser";
 
-export const middyfy = (handler) => {
-  return middy(handler).use(middyJsonBodyParser());
+const customMiddlewareBefore = async ({ event }) => {
+  if (event.body) {
+    event.rawBody = event.body;
+    event.body = JSON.parse(event.body);
+  }
+  if (!event.queryStringParameters) {
+    event.queryStringParameters = {};
+  }
+};
+
+const parser = () => {
+  return {
+    before: customMiddlewareBefore,
+  };
+};
+
+export const middyfy = (handler: any) => {
+  return middy(handler).use(parser());
 };
