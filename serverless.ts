@@ -13,7 +13,7 @@ const environmentVariables = getEnvVariables(stage);
 
 const serverlessConfiguration: AWS = {
   service: "serverless-ts-boilerplate",
-  frameworkVersion: "3.19.0",
+  frameworkVersion: "3.20.0",
   plugins: ["serverless-esbuild"],
   provider: {
     name: "aws",
