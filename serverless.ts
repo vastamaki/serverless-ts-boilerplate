@@ -13,13 +13,14 @@ const environmentVariables = getEnvVariables(stage);
 
 const serverlessConfiguration: AWS = {
   service: "serverless-ts-boilerplate",
-  frameworkVersion: "3.20.0",
+  frameworkVersion: "3.22.0",
   plugins: ["serverless-esbuild"],
   provider: {
     name: "aws",
     runtime: "nodejs16.x",
     region: "eu-west-1",
     deploymentMethod: "direct",
+    stage: "${opt:stage}",
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
